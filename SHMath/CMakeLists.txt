@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-cmake_minimum_required (VERSION 3.20)
+cmake_minimum_required (VERSION 3.21)
 
 if(DEFINED DIRECTXMATH_VERSION)
    set(SHMATH_VERSION ${DIRECTXMATH_VERSION})
@@ -14,15 +14,6 @@ project(DirectXSH
   DESCRIPTION "C++ Spherical Harmonics Math Library"
   HOMEPAGE_URL "https://go.microsoft.com/fwlink/?LinkID=615560"
   LANGUAGES CXX)
-
-if(CMAKE_VERSION VERSION_LESS 3.21)
-  get_property(not_top DIRECTORY PROPERTY PARENT_DIRECTORY)
-  if(not_top)
-    set(PROJECT_IS_TOP_LEVEL false)
-  else()
-    set(PROJECT_IS_TOP_LEVEL true)
-  endif()
-endif()
 
 if(PROJECT_IS_TOP_LEVEL)
   message(FATAL_ERROR "SHMath should be built by the main CMakeLists using BUILD_SHMATH")
@@ -175,7 +166,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE
          /sdl /Zc:inline /fp:fast
-         "/wd4061" "/wd4365" "/wd4514" "/wd4571" "/wd4668" "/wd4710" "/wd4820" "/wd5039" "/wd5045")
+         /wd4061 /wd4365 /wd4514 /wd4571 /wd4668 /wd4710 /wd4820 /wd5039 /wd5045)
 
     if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
         target_compile_options(${PROJECT_NAME} PRIVATE $<$<NOT:$<CONFIG:DEBUG>>:/Gy /Gw>)
@@ -207,6 +198,10 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.34)
         target_compile_options(${PROJECT_NAME} PRIVATE /wd5262 /wd5264)
+    endif()
+
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.50)
+      target_compile_options(${PROJECT_NAME} PRIVATE /wd4865)
     endif()
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.35)
